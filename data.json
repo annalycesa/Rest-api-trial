@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "title": "First Note",
+    "content": "This is the first note written by Annie.",
+    "author": "annie"
+  },
+  {
+    "id": 2,
+    "title": "The second one was written by Bob.",
+    "content": "Hello, this is Bob.",
+    "author": "bob"
+  },
+  {
+    "id": 3,
+    "title": "Bob wrote again.",
+    "content": "This is the second note written by Bob.",
+    "author": "bob"
+  },
+  {
+    "id": 4,
+    "title": "Chris wrote a note.",
+    "content": "Hello, this is Chris.",
+    "author": "chris"
+  },
+  {
+    "title": "Today's Diary",
+    "content": "today's lecture is hard",
+    "author": "alyce",
+    "id": 5
+  },
+  {
+    "title": "Today's homework",
+    "content": "download MongoDB",
+    "author": "alyce",
+    "id": 6
+  },
+  {
+    "id": 7,
+    "title": "a",
+    "content": "a",
+    "author": "alyce"
+  },
+  {
+    "id": 8,
+    "title": "Thursday Notes Trial",
+    "content": "Try to connect to mongoose",
+    "author": "Alyce"
+  },
+  {
+    "id": 9,
+    "title": "Thursday Notes Trial 2",
+    "content": "Try to connect to mongoose 2",
+    "author": "Still Alyce"
+  },
+  {
+    "id": 10,
+    "title": "Thursday Notes Trial 3",
+    "content": "Try to connect to mongoose 3",
+    "author": "Still Alyce"
+  },
+  {
+    "id": 11,
+    "title": "Thursday Notes Trial 4",
+    "content": "Try to connect to mongoose 4",
+    "author": "Still Alyce"
+  }
+]
