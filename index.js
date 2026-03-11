@@ -1,10 +1,16 @@
-import dotenv from 'dotenv/config' // Load environment variables 
-import express from 'express'
-import notesRouter from './controllers/controller.js' //manggil router dari controller.js, 
-// kalau nama filenya index.js, maka cukup tulis nama foldernya saja
-// import './config/connection.js' // Load environment variables
+import 'dotenv/config';
 
-import mongo from './config/connection.js'  
+import passport from './helpers/passport.js' // Load Passport configuration
+import express from 'express'
+import routes from './router/index.js'
+// kalau nama filenya index.js, maka cukup tulis nama foldernya saja
+import './config/connection.js' // Load environment variables
+
+import errorHandler from './middlewares/errorHandler.js' // Import custom error handling middleware
+import { connectRabbitMQ } from './helpers/rabbitmq.js';
+import mongo from 'mongoose';
+
+
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -12,8 +18,13 @@ const port = process.env.PORT || 3000
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/', notesRouter) 
+
+app.use(passport.initialize())
+
+
+app.use('/', routes) 
+app.use(errorHandler) // Use the custom error handling middleware
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Server listening on port ${port}`)
 })

@@ -4,10 +4,14 @@ import mongoose, { Schema } from 'mongoose';
 const ObjectId = Schema.ObjectId;
 
 const noteSchema = new mongoose.Schema({
-    id: ObjectId,
     title: String,
     content: String,
-    author: String,
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users', 
+        //ref ke model users, cs mau nyimpan id user yang membuat note ini
+        required: true
+    },
 }, { timestamps: true });
 
 const notes = mongoose.model('notes', noteSchema); //create model Note based on noteSchema, and collection name is 'Note' in MongoDB
