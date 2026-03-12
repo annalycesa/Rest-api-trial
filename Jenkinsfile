@@ -17,8 +17,8 @@ pipeline {
     stage('Inject ENV') {
       steps {
         withCredentials([file(credentialsId: 'env-file', variable: 'ENVFILE')]) {
-          sh '''
-          rm -f .env
+          bat '''
+          del -f .env
           cp "$ENVFILE" .env
           chmod 600 .env
           '''
@@ -28,13 +28,13 @@ pipeline {
 
     stage('Build Docker') {
       steps {
-        sh 'docker compose build'
+        bat 'docker compose build'
       }
     }
 
     stage('Deploy') {
       steps {
-        sh '''
+        bat '''
         docker compose down || true
         docker compose up -d --build
         docker ps
