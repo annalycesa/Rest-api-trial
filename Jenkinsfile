@@ -1,46 +1,45 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    PATH = "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin" 
-  }
-
-  stages {
-
-    stage('Clone Repo') {
-      steps {
-        git url: 'https://github.com/annalycesa/Rest-api-trial.git',
-        branch: 'main'
-      }
-    }
-
-    stage('Inject ENV') {
-      steps {
-        withCredentials([file(credentialsId: 'env-file', variable: 'ENVFILE')]) {
-          bat '''
-          del -f .env
-          cp "$ENVFILE" .env
-          chmod 600 .env
-          '''
+    stages {
+        stage('Checkout') {
+            steps {
+                // Mengambil kode terbaru dari GitHub
+                checkout scm
+            }
         }
-      }
+
+        stage('Build & Deploy with Docker Compose') {
+            steps {
+                // Mengambil file .env dari Jenkins Credentials dan men-deploy dengan Docker
+                withCredentials([file(credentialsId: 'env-file', variable: 'SECRET_ENV')]) {
+                    sh 'cp $SECRET_ENV .env'
+
+                    // 1. Bersihkan paksa container lama jika masih nyangkut
+                    sh 'docker rm -f mongodb || true'
+                    sh 'docker rm -f express-app || true'
+                    
+                    sh 'docker build -t kada-backend'
+
+                    sh 'docker run -p 3000:3000 --env-file .env kada-backend'
+                    
+
+                    sh 'docker ps'
+                }
+            }
+        }
     }
 
-    stage('Build Docker') {
-      steps {
-        bat 'docker compose build'
-      }
+    post {
+        success {
+            echo 'Pipeline berhasil! REST API sudah berjalan.'
+        }
+        failure {
+            echo 'Pipeline gagal. Silakan cek log Jenkins.'
+        }
+        always {
+            // Menghapus file .env untuk keamanan
+            sh 'rm -f .env'
+        }
     }
-
-    stage('Deploy') {
-      steps {
-        bat '''
-        docker compose down || true
-        docker compose up -d --build
-        docker ps
-        '''
-      }
-    }
-
-  }
 }
