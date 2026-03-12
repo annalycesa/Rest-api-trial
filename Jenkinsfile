@@ -12,7 +12,7 @@ pipeline {
         stage('Build & Deploy') {
             steps {
                 // Use %SECRET_ENV% (Windows syntax) instead of $SECRET_ENV
-                withCredentials([file(credentialsId: 'kada-express-env', variable: 'SECRET_ENV')]) {
+                withCredentials([file(credentialsId: 'env-file', variable: 'SECRET_ENV')]) {
                     bat '''
                     :: Windows uses 'copy' instead of 'cp'
                     copy "%SECRET_ENV%" .env
