@@ -9,22 +9,26 @@ pipeline {
             }
         }
 
-        stage('Build & Deploy with Docker Compose') {
+        stage('Build & Deploy') {
             steps {
-                // Mengambil file .env dari Jenkins Credentials dan men-deploy dengan Docker
-                withCredentials([file(credentialsId: 'env-file', variable: 'SECRET_ENV')]) {
-                    sh 'cp $SECRET_ENV .env'
-
-                    // 1. Bersihkan paksa container lama jika masih nyangkut
-                    sh 'docker rm -f mongodb || true'
-                    sh 'docker rm -f express-app || true'
+                // Use %SECRET_ENV% (Windows syntax) instead of $SECRET_ENV
+                withCredentials([file(credentialsId: 'kada-express-env', variable: 'SECRET_ENV')]) {
+                    bat '''
+                    :: Windows uses 'copy' instead of 'cp'
+                    copy "%SECRET_ENV%" .env
                     
-                    sh 'docker build -t kada-backend'
-
-                    sh 'docker run -p 3000:3000 --env-file .env kada-backend'
+                    :: Stop and remove old containers (|| ver > nul prevents crashing if they don't exist)
+                    docker rm -f mongodb || ver > nul
+                    docker rm -f express-app || ver > nul
                     
+                    :: Build (removed the invalid -d flag)
+                    docker build -t kada-backend .
+                    
+                    :: Run in detached mode (-d) so Jenkins can finish the build
+                    docker run -d -p 3000:3000 --name express-app --env-file .env kada-backend
 
-                    sh 'docker ps'
+                    docker ps
+                    '''
                 }
             }
         }
@@ -38,8 +42,8 @@ pipeline {
             echo 'Pipeline gagal. Silakan cek log Jenkins.'
         }
         always {
-            // Menghapus file .env untuk keamanan
-            sh 'rm -f .env'
+            // Windows uses 'del' instead of 'rm -f'
+            bat 'if exist .env del .env'
         }
     }
 }
